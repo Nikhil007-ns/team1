@@ -6,3 +6,10 @@ Release/
 *.map
 *.bin
 *.hex
+
+# STM32CubeIDE settings
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
