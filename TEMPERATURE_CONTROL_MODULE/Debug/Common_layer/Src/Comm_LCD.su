@@ -1,0 +1,4 @@
+../Common_layer/Src/Comm_LCD.c:16:6:i2c_master_transmit	32	static
+../Common_layer/Src/Comm_LCD.c:22:6:TCM_SystemClock_Config	88	static
+../Common_layer/Src/Comm_LCD.c:70:7:TCM_MX_I2C1_Init	8	static
+../Common_layer/Src/Comm_LCD.c:104:7:TCM_MX_GPIO_Init	16	static
