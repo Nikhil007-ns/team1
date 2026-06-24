@@ -1,6 +1,0 @@
-../Application_layer/Src/App_LCD.c:12:6:LCD_Handler	1
-../Application_layer/Src/App_LCD.c:23:6:TCM_lcd_send_cmd	1
-../Application_layer/Src/App_LCD.c:39:6:TCM_lcd_send_data	1
-../Application_layer/Src/App_LCD.c:55:6:TCM_lcd_clear	1
-../Application_layer/Src/App_LCD.c:61:6:TCM_lcd_init	1
-../Application_layer/Src/App_LCD.c:92:6:TCM_lcd_send_string	2
