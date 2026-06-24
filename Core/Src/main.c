@@ -17,14 +17,12 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <rtos_com.h>
 #include "main.h"
 #include "cmsis_os.h"
-
+#include "App_LCD.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "gpio_com.h"
-#include "uart_com.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,16 +41,32 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+//I2C_HandleTypeDef hi2c1;
 
-
-
+/* Definitions for defaultTask */
+//osThreadId_t defaultTaskHandle;
+//const osThreadAttr_t defaultTask_attributes = {
+//  .name = "defaultTask",
+//  .stack_size = 128 * 4,
+//  .priority = (osPriority_t) osPriorityNormal,
+//};
+///* Definitions for lcd_handler */
+//osThreadId_t lcd_handlerHandle;
+//const osThreadAttr_t lcd_handler_attributes = {
+//  .name = "lcd_handler",
+//  .stack_size = 512 * 4,
+//  .priority = (osPriority_t) osPriorityLow,
+//};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-
-
+//void SystemClock_Config(void);
+//static void MX_GPIO_Init(void);
+//static void MX_I2C1_Init(void);
+void StartDefaultTask(void *argument);
+void StartTask02(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -84,21 +98,20 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  MY_SystemClock_Config();
+  TCM_SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MY_GPIO_Init();
-  MY_USART1_UART_Init();
+  TCM_MX_GPIO_Init();
+  TCM_MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Init scheduler */
-
   osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -115,17 +128,17 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  	  	  	  Createqueue();
-
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
+  /* creation of defaultTask */
+//  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of lcd_handler */
+//  lcd_handlerHandle = osThreadNew(StartTask02, NULL, &lcd_handler_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  	  	  MY_RTOS_Threads();
-
-
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -133,7 +146,8 @@ int main(void)
   /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
-  	  	  	  osKernelStart();
+  MX_FREERTOS_Init();
+  osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
 
@@ -148,9 +162,146 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+//void SystemClock_Config(void)
+//{
+//  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+//
+//  /** Configure the main internal regulator output voltage
+//  */
+//  __HAL_RCC_PWR_CLK_ENABLE();
+//  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+//
+//  /** Initializes the RCC Oscillators according to the specified parameters
+//  * in the RCC_OscInitTypeDef structure.
+//  */
+//  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+//  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+//  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+//  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+//  RCC_OscInitStruct.PLL.PLLM = 16;
+//  RCC_OscInitStruct.PLL.PLLN = 336;
+//  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+//  RCC_OscInitStruct.PLL.PLLQ = 2;
+//  RCC_OscInitStruct.PLL.PLLR = 2;
+//  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+//
+//  /** Initializes the CPU, AHB and APB buses clocks
+//  */
+//  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+//                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+//  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+//  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+//  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+//
+//  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+//}
+//
+///**
+//  * @brief I2C1 Initialization Function
+//  * @param None
+//  * @retval None
+//  */
+//static void MX_I2C1_Init(void)
+//{
+//
+//  /* USER CODE BEGIN I2C1_Init 0 */
+//
+//  /* USER CODE END I2C1_Init 0 */
+//
+//  /* USER CODE BEGIN I2C1_Init 1 */
+//
+//  /* USER CODE END I2C1_Init 1 */
+//  hi2c1.Instance = I2C1;
+//  hi2c1.Init.ClockSpeed = 100000;
+//  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+//  hi2c1.Init.OwnAddress1 = 0;
+//  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+//  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+//  hi2c1.Init.OwnAddress2 = 0;
+//  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+//  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+//  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+//  /* USER CODE BEGIN I2C1_Init 2 */
+//
+//  /* USER CODE END I2C1_Init 2 */
+//
+//}
+//
+///**
+//  * @brief GPIO Initialization Function
+//  * @param None
+//  * @retval None
+//  */
+//static void MX_GPIO_Init(void)
+//{
+//  /* USER CODE BEGIN MX_GPIO_Init_1 */
+//
+//  /* USER CODE END MX_GPIO_Init_1 */
+//
+//  /* GPIO Ports Clock Enable */
+//  __HAL_RCC_GPIOB_CLK_ENABLE();
+//
+//  /* USER CODE BEGIN MX_GPIO_Init_2 */
+//
+//  /* USER CODE END MX_GPIO_Init_2 */
+//}
+//
+///* USER CODE BEGIN 4 */
+//
+///* USER CODE END 4 */
+//
+///* USER CODE BEGIN Header_StartDefaultTask */
+///**
+//  * @brief  Function implementing the defaultTask thread.
+//  * @param  argument: Not used
+//  * @retval None
+//  */
+/* USER CODE END Header_StartDefaultTask */
+//void StartDefaultTask(void *argument)
+//{
+//  /* USER CODE BEGIN 5 */
+//  /* Infinite loop */
+//  for(;;)
+//  {
+//    osDelay(1);
+//  }
+//  /* USER CODE END 5 */
+//}
 
-
-
+/* USER CODE BEGIN Header_StartTask02 */
+/**
+* @brief Function implementing the lcd_handler thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask02 */
+//void StartTask02(void *argument)
+//{
+//  /* USER CODE BEGIN StartTask02 */
+//  /* Infinite loop */
+//  for(;;)
+//  {
+//	  LCD_Handler();
+//    osDelay(1000);
+//  }
+//  /* USER CODE END StartTask02 */
+//}
 
 /**
   * @brief  This function is executed in case of error occurrence.
